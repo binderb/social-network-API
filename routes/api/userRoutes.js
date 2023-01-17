@@ -5,7 +5,9 @@ import {
   getUserById,
   createUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  addFriend,
+  deleteFriend
 } from '../../controllers/userController.js';
 
 router.route('/')
@@ -21,5 +23,11 @@ router.route('/:id')
 .put(updateUser)
 // Delete 1 user and associated thoughts.
 .delete(deleteUser);
+
+router.route('/:userId/friends/:friendId')
+// Add 1 friend.
+.post(addFriend)
+// Delete 1 friend.
+.delete(deleteFriend);
 
 export default router;

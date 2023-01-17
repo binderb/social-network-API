@@ -71,3 +71,57 @@ export async function deleteUser (req, res) {
   }
 }
 
+// Add friend
+export async function addFriend (req, res) {
+  try {
+    // Must have a user ID that matches an existing user.
+    const user = await User.findOne({_id : req.params.userId});
+    if (!user) {
+      res.status(404).json({message: `Target user's ID not found!`});
+      return;
+    }
+    // Must have a friend ID that matches an existing user.
+    const friend = await User.findOne({_id : req.params.friendId});
+    if (!friend) {
+      res.status(404).json({message: `Friend's ID not found!`});
+      return;
+    }
+    // Update the associated user document.
+    const updatedUser = await User.findOneAndUpdate(
+      {_id: req.params.userId},
+      {$addToSet: {friends: req.params.friendId}},
+      {new: true}
+    );
+    res.status(201).json(updatedUser);
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({message: `${err.name}: ${err.message}`});
+  }
+}
+
+// Delete friend
+export async function deleteFriend (req, res) {
+  try {
+    // Must have a user ID and friend ID that matches an existing user's record.
+    const user = await User.findOne(
+      {
+        _id : req.params.userId,
+        friends: req.params.friendId
+      }
+    );
+    if (!user) {
+      res.status(404).json({message: `Target user's ID not found, or user is not associated with provided friend ID.`});
+      return;
+    }
+    // Update the associated user document.
+    const updatedUser = await User.findOneAndUpdate(
+      {_id: req.params.userId},
+      {$pull: {friends: req.params.friendId}},
+      {new: true}
+    );
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).json({message: `${err.name}: ${err.message}`});
+  }
+}
