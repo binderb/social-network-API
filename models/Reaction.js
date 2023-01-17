@@ -19,7 +19,7 @@ const reactionSchema = new Schema(
       type: Date,
       default: Date.now,
       get: (date) => {
-        if (date) return "my date!";
+        if (date) return date.toLocaleString('en-us', { year:"numeric", month:"short", day:"numeric", hour12:"true", hour:"numeric", minute:"numeric"});
       }
     }
   },

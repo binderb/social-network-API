@@ -12,7 +12,10 @@ const thoughtSchema = new Schema(
     },
     createdAt: {
       type: Date,
-      default: Date.now
+      default: Date.now,
+      get: (date) => {
+        if (date) return date.toLocaleString('en-us', { year:"numeric", month:"short", day:"numeric", hour12:"true", hour:"numeric", minute:"numeric"});
+      }
     },
     username: {
       type: String,
@@ -22,7 +25,8 @@ const thoughtSchema = new Schema(
   },
   {
     toJSON: {
-      virtuals: true
+      virtuals: true,
+      getters: true
     },
     id: false
   }
@@ -35,4 +39,3 @@ thoughtSchema.virtual('reactionCount').get(function () {
 const Thought = model('thought', thoughtSchema);
 
 export default Thought;
-
