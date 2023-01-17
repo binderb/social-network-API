@@ -29,20 +29,25 @@ export async function getThoughtById (req, res) {
 export async function createThought (req, res) {
   try {
     // Must have a username that matches an existing user.
-    if (!req.body.username) {
-      res.status(403).json({message: `Must provide an author username!`});
+    if (!req.body.userId || !req.body.username) {
+      res.status(403).json({message: `Must provide an author username and user ID!`});
       return;
     }
-    const user = await User.findOne({username : req.body.username});
+    const user = await User.findOne(
+      {
+        _id: req.body.userId,
+        username : req.body.username
+      }
+    );
     if (!user) {
-      res.status(404).json({message: `Author username not found!`});
+      res.status(404).json({message: `Author username or user ID not found!`});
       return;
     }
     // Create the new document in the db.
     const newThought = await Thought.create(req.body);
     // Update the associated user document.
     const updatedUser = await User.findOneAndUpdate(
-      {username: req.body.username},
+      {_id: req.body.userId},
       {$addToSet: {thoughts: newThought._id}},
       {new: true}
     );
@@ -56,16 +61,27 @@ export async function createThought (req, res) {
 // Update one thought.
 export async function updateThought (req, res) {
   try {
-    const updatedUser = await Thought.findOneAndUpdate(
+    // If the user is trying to set the username field,
+    // need to make sure that the username is valid.
+    if (req.body.username) {
+      const user = await User.findOne({
+        username: req.body.username
+      });
+      if (!user) {
+        res.status(404).json({message: `Cannot update record: provided username doesn't exist.`});
+        return;
+      }
+    }
+    const updatedThought = await Thought.findOneAndUpdate(
       {_id: req.params.id},
       {$set: req.body},
       {runValidators: true, new: true}
     );
-    if (!updatedUser) {
+    if (!updatedThought) {
       res.status(404).json({message: `No thought found with the given ID.`});
       return;
     }
-    res.status(200).json(updatedUser);
+    res.status(200).json(updatedThought);
   } catch (err) {
     res.status(500).json({message: `${err.name}: ${err.message}`});
   }
