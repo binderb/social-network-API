@@ -1,5 +1,5 @@
 import express from 'express';
-//import db from './config/connection';
+import db from './config/connection.js';
 import routes from './routes/index.js';
 
 // Define server and port
@@ -14,4 +14,6 @@ app.use(express.json());
 app.use(routes);
 
 // Start server
-app.listen(PORT, () => console.log('listening'));
+db.once('open', () => {
+  app.listen(PORT, () => console.log('listening'));
+});
