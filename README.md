@@ -43,8 +43,7 @@ to start the Express server. The following API endpoints are be available on the
 
 ### Walkthrough
 
-(To be created)
-<!-- 🎥 A video walkthrough of required database setup and API usage can be viewed [here](https://drive.google.com/file/d/1XAa76kPWP3HMJqi-kfSOrJxQb0zjESXb/view). -->
+🎥 A video walkthrough of required setup and API usage can be viewed [here](https://drive.google.com/file/d/17yA4fZXNCB12n0fe7ZpDnKsZEG2JbNLR/view).
 
 ## Credits
 
